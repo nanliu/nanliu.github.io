@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<urlset xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
+    <url>
+        <loc>http://nanliu.github.com/blog/2013/01/01/from-typhoon-to-computers/</loc>
+        <lastmod>2013-02-09T17:42:10-08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://nanliu.github.com/blog/2013/01/02/new-year-reboot/</loc>
+        <lastmod>2013-02-14T15:04:03-08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://nanliu.github.com/blog/2013/02/08/puppet-3-dot-0-types-and-providers/</loc>
+        <lastmod>2013-02-09T17:38:30-08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://nanliu.github.com/blog/archives/</loc>
+        <lastmod>2013-02-14T15:04:03-08:00</lastmod>
+    </url>
+    <url>
+        <loc>http://nanliu.github.com/</loc>
+        <lastmod>2013-02-14T15:04:03-08:00</lastmod>
+    </url>
+</urlset>

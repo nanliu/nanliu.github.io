@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: puppet | 电脑]]></title>
+  <link href="http://nanliu.github.com/blog/categories/puppet/atom.xml" rel="self"/>
+  <link href="http://nanliu.github.com/"/>
+  <updated>2013-02-14T15:06:51-08:00</updated>
+  <id>http://nanliu.github.com/</id>
+  <author>
+    <name><![CDATA[Nan Liu]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Migrating to Puppet 3.x]]></title>
+    <link href="http://nanliu.github.com/blog/2013/02/08/puppet-3-dot-0-types-and-providers/"/>
+    <updated>2013-02-08T01:52:00-08:00</updated>
+    <id>http://nanliu.github.com/blog/2013/02/08/puppet-3-dot-0-types-and-providers</id>
+    <content type="html"><![CDATA[<p>I am a bit late to the Puppet 3.0 party, since 3.1 have been released recently<sup id="fnref:fn-semver"><a href="#fn:fn-semver" rel="footnote">1</a></sup>. After reading the <a href="http://docs.puppetlabs.com/puppet/3/reference/release_notes.html">release notes</a> and <a href="http://somethingsinistral.net/blog/the-angry-guide-to-puppet-3/">“The Angry Guide to Puppet 3”</a>, I thought most of the upgrade issues have been covered, but there was still a small surprise when it comes to types and providers.</p>
+
+<p>The <a href="http://docs.puppetlabs.com/puppet/3/reference/release_notes.html#exec">Exec resource</a> had a small behavior change noted as: “Due to misleading values, the HOME and USER environment variables are now unset when running commands.”</p>
+
+<p>The impact is a bit more significant than updating Exec resource since it also affects commands declared in providers. If the invoked command depends on the HOME environment variables such as brew, it will fail in Puppet 3:</p>
+
+<pre><code>Error: /Stage[main]//Package[rbenv]:
+Could not evaluate: Could not list packages:
+Execution of '/usr/local/bin/brew list --versions rbenv' returned 1:
+/System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/pathname.rb:853:in `expand_path':
+couldn't find HOME environment -- expanding `~/Library/Caches/Homebrew' (ArgumentError)
+from /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/pathname.rb:853:in `expand_path'
+from /usr/local/Library/Homebrew/global.rb:22:in `cache'
+from /usr/local/Library/Homebrew/global.rb:41
+from /usr/local/bin/brew:17:in `require'
+from /usr/local/bin/brew:17
+</code></pre>
+
+<p>The solution is described in <a href="http://projects.puppetlabs.com/issues/16779">#16779</a>:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'><figcaption><span>Setting command environment variables</span><a href='http://projects.puppetlabs.com/issues/16779'>16779 </a></figcaption> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">has_command</span><span class="p">(</span><span class="ss">:brew</span><span class="p">,</span> <span class="err">‘</span><span class="n">brew</span><span class="err">’</span><span class="p">)</span> <span class="k">do</span>
+</span><span class='line'>  <span class="n">environment</span><span class="p">({</span> <span class="err">‘</span><span class="no">HOME</span><span class="err">’</span> <span class="o">=&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="no">ENV</span><span class="o">[</span><span class="err">‘</span><span class="no">HOME</span><span class="err">’</span><span class="o">]</span> <span class="p">})</span>
+</span><span class='line'><span class="k">end</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>The method ‘has_command’ is not backwards compatible with Puppet 2.x, so we need to wrap it around some version check:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="k">if</span> <span class="ss">Puppet</span><span class="p">:</span><span class="ss">:Util</span><span class="o">::</span><span class="no">Package</span><span class="o">.</span><span class="n">versioncmp</span><span class="p">(</span><span class="no">Puppet</span><span class="o">.</span><span class="n">version</span><span class="p">,</span> <span class="err">‘</span><span class="mi">3</span><span class="o">.</span><span class="mi">0</span><span class="err">’</span><span class="p">)</span> <span class="o">&amp;</span><span class="n">gt</span><span class="p">;</span><span class="o">=</span> <span class="mi">0</span>
+</span><span class='line'>  <span class="n">has_command</span><span class="p">(</span><span class="ss">:brew</span><span class="p">,</span> <span class="err">“</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">brew</span><span class="err">”</span><span class="p">)</span> <span class="k">do</span>
+</span><span class='line'>    <span class="n">environment</span><span class="p">({</span> <span class="err">‘</span><span class="no">HOME</span><span class="err">’</span> <span class="o">=&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="no">ENV</span><span class="o">[</span><span class="err">‘</span><span class="no">HOME</span><span class="err">’</span><span class="o">]</span> <span class="p">})</span>
+</span><span class='line'>  <span class="k">end</span>
+</span><span class='line'><span class="k">else</span>
+</span><span class='line'> <span class="n">commands</span> <span class="ss">:brew</span> <span class="o">=&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="err">“</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">brew</span><span class="err">”</span>
+</span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
+</span><span class='line'>
+</span><span class='line'><span class="sr">&lt;p&gt;brew(‘list’, ‘–versions’)</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>This also means execute will strip these two environment variables as well, so commands pass :custom_environment to preserve this value. execute is less common, and don’t use it unless you need special behavior such as :failonfail =&gt; false:</p>
+
+<p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">execute</span><span class="p">(</span><span class="o">[</span><span class="n">command</span><span class="p">(</span><span class="ss">:brew</span><span class="p">),</span> <span class="err">‘</span><span class="n">list</span><span class="err">’</span><span class="p">,</span> <span class="err">‘–</span><span class="n">version</span><span class="err">’</span><span class="o">]</span><span class="p">,</span> <span class="ss">:custom_environment</span> <span class="o">=&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="p">{</span><span class="err">‘</span><span class="no">HOME</span><span class="err">’</span><span class="o">=&amp;</span><span class="n">gt</span><span class="p">;</span><span class="no">ENV</span><span class="o">[</span><span class="err">‘</span><span class="no">HOME</span><span class="err">’</span><span class="o">]</span><span class="p">})</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div></p>
+
+<p>Hope this is helpful for anyone else who stumbles into this issue.</p>
+
+<div class="footnotes">
+  <ol>
+    <li id="fn:fn-semver">
+      <p>The proliferation of versions might be alarming, but it’s due to stricter adherence to semantic versioning. The changes 3.0 3.1 is closer to 2.7.0 to 2.7.1 than 2.6 to 2.7.<a href="#fnref:fn-semver" rel="reference">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
+]]></content>
+  </entry>
+  
+</feed>

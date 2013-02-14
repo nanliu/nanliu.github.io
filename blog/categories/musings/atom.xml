@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: musings | 电脑]]></title>
+  <link href="http://nanliu.github.com/blog/categories/musings/atom.xml" rel="self"/>
+  <link href="http://nanliu.github.com/"/>
+  <updated>2013-02-14T15:06:51-08:00</updated>
+  <id>http://nanliu.github.com/</id>
+  <author>
+    <name><![CDATA[Nan Liu]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[New Year: Reboot]]></title>
+    <link href="http://nanliu.github.com/blog/2013/01/02/new-year-reboot/"/>
+    <updated>2013-01-02T20:59:00-08:00</updated>
+    <id>http://nanliu.github.com/blog/2013/01/02/new-year-reboot</id>
+    <content type="html"><![CDATA[<p>For the last two and half year, I lived, breathed, and spent my waking hours thinking about Puppet. In a blink of an eye Puppet Labs is no longer the 12 person startup above Old Town Pizza shop<sup id="fnref:fn-pizza"><a href="#fn:fn-pizza" rel="footnote">1</a></sup> or more infamously, above the start of the Shanghai Tunnel <sup id="fnref:fn-shanghai"><a href="#fn:fn-shanghai" rel="footnote">2</a></sup> in China Town. </p>
+
+<p><img src="/images/reductive.jpg" title="‘Seriously, this was it.’" ></p>
+
+<p>The company can probably can start shedding the term startup, since it’s 10x the size, closed a third round investment, and finished their third office move to the Pearl district.</p>
+
+<p>Looking back, I still pinch myself for even getting the opportunity to be in Portland since I started the job knowing little about the software. I’m still amused by the interview with the other candidate in the same room that felt like a reality TV show<sup id="fnref:fn-interview"><a href="#fn:fn-interview" rel="footnote">3</a></sup>. Fast forward 200,000 miles around the world later and I’m finally feeling comfortable using and talking about Puppet. It’s been an incredible ride, and more important I’ve been lucky to work with some of the brightest people I know. If you enjoy solving infrastructure problems, <a href="http://www.jobscore.com/jobs/puppetlabs">apply and have a blast</a>.</p>
+
+<p>It’s a New Year, and I’m sad it’s time for a reboot and I’ve left Puppet Labs to join VMware as a Sr. Systems Engineer under R&amp;D. As usual a new shiny problem has presented itself and I’m diving head first into the unknown.</p>
+
+<p>However I’m not saying goodbye to the Puppet community. A glimps of what’s to come should be announced at <a href="http://communities.vmware.com/community/vmtn/partner-exchange">VMware Partners Exchange 2013</a>. Here’s to 2013.</p>
+
+<div class="footnotes">
+  <ol>
+    <li id="fn:fn-pizza">
+      <p><a href="http://www.oldtownpizza.com/">www.oldtownpizza.com</a> + Stumptown Coffee = Startup Fuel.<a href="#fnref:fn-pizza" rel="reference">&#8617;</a></p>
+    </li>
+    <li id="fn:fn-shanghai">
+      <p>I thought it was a joke at first too: <a href="http://www.shanghaitunnels.info/">http://www.shanghaitunnels.info</a><a href="#fnref:fn-shanghai" rel="reference">&#8617;</a></p>
+    </li>
+    <li id="fn:fn-interview">
+      <p>Story for another time, best told by Dan. Thankfully they didn’t maintain this medieval practice of jousting between candidates.<a href="#fnref:fn-interview" rel="reference">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[From Typhoon to Computers]]></title>
+    <link href="http://nanliu.github.com/blog/2013/01/01/from-typhoon-to-computers/"/>
+    <updated>2013-01-01T10:21:00-08:00</updated>
+    <id>http://nanliu.github.com/blog/2013/01/01/from-typhoon-to-computers</id>
+    <content type="html"><![CDATA[<p>Translations tend to have this weird effect of imbuing additional meanings the original language didn’t intend to contain. One of the possible origins for the word Typhoon is the Chinese pronunciation of “East Wind”(东风) <sup id="fnref:fn-jstor"><a href="#fn:fn-jstor" rel="footnote">1</a></sup>. Interestingly enough, the word has been imported back to Chinese phonetically as “Typhoon”(台风) with a completely different meaning than the original word east wind.</p>
+
+<p>There’s two translations of the word computers in Chinese: “计算机” and “电脑”. If we go through the typhoon exercise and translate them back to English. The first, “Computing Machine”, is not far off from the original meaning, but the second, “Electronic Brain”, seems far more imaginative; especially compared to what computer systems were able to achieve when these words were first translated.</p>
+
+<p>When I started working on computers, machines were simply waiting for the next human instruction, the tools for managing them doesn’t really mask the rather tedious task. </p>
+
+<p><img src="http://imgs.xkcd.com/comics/tar.png" title="‘tar -xvf’" ></p>
+
+<p>However with latest generation of configuration management software, I finally feel like we started building solutions to tackle the automation problem in a fundamental way. Similar to the insight in Stephen Wolfram’s book “A New Kind of Science”, complexity can be derive from simple rules, the inverse also appears be true: “complex systems can be managed with simple tools following basic rules chained together”.</p>
+
+<p><img src="/images/wolfram.png" title="‘Wolfram substitution systems models growth of plants’" ></p>
+
+<p>We are certainly nowhere near having all the right building blocks for deploying and managing self healing infrastructure, but it’s a great aspiration to build better automation and be one small step closer towards the “Electronic Brain”. </p>
+
+<div class="footnotes">
+  <ol>
+    <li id="fn:fn-jstor">
+      <p><a href="www.jstor.org/stable/1798728">www.jstor.org/stable/1798728</a><a href="#fnref:fn-jstor" rel="reference">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
+]]></content>
+  </entry>
+  
+</feed>
