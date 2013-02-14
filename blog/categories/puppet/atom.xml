@@ -4,7 +4,7 @@
   <title><![CDATA[Category: puppet | 电脑]]></title>
   <link href="http://nanliu.github.com/blog/categories/puppet/atom.xml" rel="self"/>
   <link href="http://nanliu.github.com/"/>
-  <updated>2013-02-14T15:06:51-08:00</updated>
+  <updated>2013-02-14T15:19:32-08:00</updated>
   <id>http://nanliu.github.com/</id>
   <author>
     <name><![CDATA[Nan Liu]]></name>
@@ -15,9 +15,9 @@
   
   <entry>
     <title type="html"><![CDATA[Migrating to Puppet 3.x]]></title>
-    <link href="http://nanliu.github.com/blog/2013/02/08/puppet-3-dot-0-types-and-providers/"/>
+    <link href="http://nanliu.github.com/blog/2013/02/08/migrating-to-puppet-3-dot-x/"/>
     <updated>2013-02-08T01:52:00-08:00</updated>
-    <id>http://nanliu.github.com/blog/2013/02/08/puppet-3-dot-0-types-and-providers</id>
+    <id>http://nanliu.github.com/blog/2013/02/08/migrating-to-puppet-3-dot-x</id>
     <content type="html"><![CDATA[<p>I am a bit late to the Puppet 3.0 party, since 3.1 have been released recently<sup id="fnref:fn-semver"><a href="#fn:fn-semver" rel="footnote">1</a></sup>. After reading the <a href="http://docs.puppetlabs.com/puppet/3/reference/release_notes.html">release notes</a> and <a href="http://somethingsinistral.net/blog/the-angry-guide-to-puppet-3/">“The Angry Guide to Puppet 3”</a>, I thought most of the upgrade issues have been covered, but there was still a small surprise when it comes to types and providers.</p>
 
 <p>The <a href="http://docs.puppetlabs.com/puppet/3/reference/release_notes.html#exec">Exec resource</a> had a small behavior change noted as: “Due to misleading values, the HOME and USER environment variables are now unset when running commands.”</p>
@@ -62,7 +62,7 @@ from /usr/local/bin/brew:17
 </span><span class='line'>    <span class="n">environment</span><span class="p">({</span> <span class="err">‘</span><span class="no">HOME</span><span class="err">’</span> <span class="o">=&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="no">ENV</span><span class="o">[</span><span class="err">‘</span><span class="no">HOME</span><span class="err">’</span><span class="o">]</span> <span class="p">})</span>
 </span><span class='line'>  <span class="k">end</span>
 </span><span class='line'><span class="k">else</span>
-</span><span class='line'> <span class="n">commands</span> <span class="ss">:brew</span> <span class="o">=&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="err">“</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">brew</span><span class="err">”</span>
+</span><span class='line'>  <span class="n">commands</span> <span class="ss">:brew</span> <span class="o">=&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="err">“</span><span class="o">/</span><span class="n">usr</span><span class="o">/</span><span class="n">local</span><span class="o">/</span><span class="n">bin</span><span class="o">/</span><span class="n">brew</span><span class="err">”</span>
 </span><span class='line'><span class="k">end</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
 </span><span class='line'>
 </span><span class='line'><span class="sr">&lt;p&gt;brew(‘list’, ‘–versions’)</span>
