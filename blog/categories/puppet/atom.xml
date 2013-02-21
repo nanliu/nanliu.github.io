@@ -4,7 +4,7 @@
   <title><![CDATA[Category: puppet | 电脑]]></title>
   <link href="http://nanliu.github.com/blog/categories/puppet/atom.xml" rel="self"/>
   <link href="http://nanliu.github.com/"/>
-  <updated>2013-02-20T19:09:20-08:00</updated>
+  <updated>2013-02-20T19:24:36-08:00</updated>
   <id>http://nanliu.github.com/</id>
   <author>
     <name><![CDATA[Nan Liu]]></name>
@@ -97,14 +97,16 @@
 <span class='line-number'>7</span>
 <span class='line-number'>8</span>
 <span class='line-number'>9</span>
+<span class='line-number'>10</span>
 </pre></td><td class='code'><pre><code class='ruby'><span class='line'><span class="n">vcsa_eula</span> <span class="p">{</span> <span class="vg">$name</span><span class="p">:</span>
 </span><span class='line'>  <span class="k">ensure</span>    <span class="o">=&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="n">accept</span><span class="p">,</span>
 </span><span class='line'>  <span class="n">transport</span> <span class="o">=&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="no">Transport</span><span class="o">[</span><span class="err">‘</span><span class="n">ssh</span><span class="err">’</span><span class="o">]</span><span class="p">,</span>
 </span><span class='line'><span class="p">}</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
 </span><span class='line'>
 </span><span class='line'><span class="sr">&lt;p&gt;vc_datacenter { ‘datacenter1’:</span>
-</span><span class='line'><span class="sr">  path   =&amp;gt; ‘/</span><span class="n">datacenter1</span><span class="err">’</span><span class="p">,</span>
-</span><span class='line'>  <span class="k">ensure</span> <span class="o">=&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="n">present</span><span class="p">,</span>
+</span><span class='line'><span class="sr">  path      =&amp;gt; ‘/</span><span class="n">datacenter1</span><span class="err">’</span><span class="p">,</span>
+</span><span class='line'>  <span class="k">ensure</span>    <span class="o">=&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="n">present</span><span class="p">,</span>
+</span><span class='line'>  <span class="n">transport</span> <span class="o">=&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="no">Transport</span><span class="o">[</span><span class="err">‘</span><span class="n">vcenter</span><span class="err">’</span><span class="o">]</span><span class="p">,</span>
 </span><span class='line'><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
