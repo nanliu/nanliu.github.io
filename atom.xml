@@ -4,7 +4,7 @@
   <title><![CDATA[电脑]]></title>
   <link href="http://nanliu.github.com/atom.xml" rel="self"/>
   <link href="http://nanliu.github.com/"/>
-  <updated>2013-02-20T19:04:55-08:00</updated>
+  <updated>2013-02-20T19:09:20-08:00</updated>
   <id>http://nanliu.github.com/</id>
   <author>
     <name><![CDATA[Nan Liu]]></name>
@@ -18,7 +18,7 @@
     <link href="http://nanliu.github.com/blog/2013/02/20/device-management-with-puppet/"/>
     <updated>2013-02-20T17:14:00-08:00</updated>
     <id>http://nanliu.github.com/blog/2013/02/20/device-management-with-puppet</id>
-    <content type="html"><![CDATA[<p>In Puppet 2.7, one of the new features added was device management. In this initial release, only a small number of Cisco switches were supported. Overall the capabilities wasn’t really signifcant, however the concept shifted people’s perception of the boundaries for configuration management. All of sudden Puppet didn’t end at the operating system, and extended to black boxes that were previously thought to be a bridge too far.</p>
+    <content type="html"><![CDATA[<p>In Puppet 2.7, one of the new features added was device management. In this initial release, only a small number of Cisco switches were supported. Overall the capabilities weren’t really signifcant, however the concept shifted people’s perception of the boundaries for configuration management. All of sudden Puppet didn’t end at the operating system, and extended to black boxes that were previously thought to be a bridge too far.</p>
 
 <p><img src="http://nanliu.github.com/images/inception_dream.gif" title="'dream big'" /></p>
 
@@ -108,12 +108,12 @@
 </span><span class="line"><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>Hopefully this gave a good glimps without revealing too much ahead of the event. Stay tuned, and I will provide more techinical details next week after PEX.</p>
+<p>Hopefully this gave a good glimpse without revealing too much ahead of the event. Stay tuned, and I will provide more techinical details next week after PEX.</p>
 
 <div class="footnotes">
   <ol>
     <li id="fn:fn-juniper">
-      <p>Juniper have gone as far as embedding Puppet agent to the device.<a href="#fnref:fn-juniper" rel="reference">&#8617;</a></p>
+      <p>Juniper has gone as far as embedding Puppet agent to the device.<a href="#fnref:fn-juniper" rel="reference">&#8617;</a></p>
     </li>
   </ol>
 </div>
