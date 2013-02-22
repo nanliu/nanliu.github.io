@@ -4,7 +4,7 @@
   <title><![CDATA[Category: device | 电脑]]></title>
   <link href="http://nanliu.github.com/blog/categories/device/atom.xml" rel="self"/>
   <link href="http://nanliu.github.com/"/>
-  <updated>2013-02-21T21:49:09-08:00</updated>
+  <updated>2013-02-21T21:52:58-08:00</updated>
   <id>http://nanliu.github.com/</id>
   <author>
     <name><![CDATA[Nan Liu]]></name>
@@ -25,9 +25,9 @@
 <p>This slowly spawned a flurry of activities exploring network devices, load-balancers, and storage:</p>
 
 <ul>
-  <li><a href="http://www.juniper.net/techpubs/en_US/junos-puppet0.8/topics/concept/automation-junos-puppet-overview.html">Juniper</a><sup id="fnref:fn-juniper"><a href="#fn:fn-juniper" rel="footnote">1</a></sup>: <a href="https://github.com/jeremyschulman/puppet-netdev">puppet-netdev</a></li>
-  <li><a href="https://devcentral.f5.com/blogs/us/f5-friday-how-to-stop-running-the-project-gauntlet-of-doom-with-devops">F5 Big-IP</a>: <a href="https://github.com/puppetlabs/puppetlabs-f5">puppetlabs-f5</a></li>
-  <li><a href="http://forge.puppetlabs.com/fatmcgav/netapp">Net App</a>: <a href="https://github.com/fatmcgav/fatmcgav-netapp">fatmcgav-netapp</a></li>
+  <li><a href="http://www.juniper.net/techpubs/en_US/junos-puppet0.8/topics/concept/automation-junos-puppet-overview.html">Juniper</a><sup id="fnref:fn-juniper"><a href="#fn:fn-juniper" rel="footnote">1</a></sup>: <a href="https://forge.puppetlabs.com/jeremyschulman/netdev">puppet-netdev</a></li>
+  <li><a href="https://devcentral.f5.com/blogs/us/f5-friday-how-to-stop-running-the-project-gauntlet-of-doom-with-devops">F5 Big-IP</a>: <a href="https://forge.puppetlabs.com/puppetlabs/f5">puppetlabs-f5</a></li>
+  <li><a href="https://github.com/fatmcgav/fatmcgav-netapp">Net App</a>: <a href="http://forge.puppetlabs.com/fatmcgav/netapp">fatmcgav-netapp</a></li>
 </ul>
 
 <p>The benefits of having the entire infrastructure automated with a single tool chain under version control is indisputable. A Software Define Data Center is not complete until you gap the management capabilities whether it’s your network or storage. With that said, there’s still some limitations with puppet device. Currently, the device command only supports communication with a single device at a time. This is fine when the device is self contained, but in some instances it’s necessary to interact with a series of devices to perform a meaningful task. For this reason, we developed transport resource to support multiple connectivity for a single puppet execution. This is not a substitution for orchestration of a chain of events, but rather to group resources that have interactions between different devices:</p>
@@ -162,7 +162,7 @@
 </span><span class='line'><span class="go">notice: Finished catalog run in 2.90 seconds</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div></p>
 
-<p>In the example above, a single ssh connection was established at the beginning, and closed at the end of the session. This was one of the roadblock <a href="https://twitter.com/nwkautomaniac">Jeremy Schulman</a> brought up when developing network devices NETCONF sessions. Originally I suggested a resource responsible for closing the connections that had automatic dependencies to the correct network resources since there was no API to do this in the provider<sup id="fnref:fn-tickets"><a href="#fn:fn-tickets" rel="footnote">2</a></sup>. However this doesn’t take in consideration for resources failures which results in dangling open connections. Ultimately, I went back to Puppet::Transaction and adding the connection cleanup at the end of evaluate method:</p>
+<p>In the example above, a single ssh connection was established at the beginning, and closed at the end of the session. This was one of the roadblock <a href="https://twitter.com/nwkautomaniac">Jeremy Schulman</a> brought up when developing network devices NETCONF sessions. Originally I suggested a resource responsible for closing the connections that had automatic dependencies to the correct network resources since there was no API to do this in the provider<sup id="fnref:fn-tickets"><a href="#fn:fn-tickets" rel="footnote">2</a></sup>. However this doesn’t take in consideration for resources failures which results in dangling open connections. Ultimately, I went back to Puppet::Transaction and added the connection cleanup at the end of evaluate method:</p>
 
 <p><div class='bogus-wrapper'><notextile><figure class='code'> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
