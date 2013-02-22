@@ -86,7 +86,7 @@
 			Device Management With Puppet</a>
 	</h2>
 	<div class="entry-content">
-		<p>In Puppet 2.7, one of the new features added was device management. In this initial release, only a small number of Cisco switches were supported. Overall the capabilities weren’t really signifcant, however the concept shifted people’s perception of the boundaries for configuration management. All of sudden Puppet didn’t end at the operating system, and extended to black boxes that were previously thought to be a bridge too far.</p>
+		<p>In Puppet 2.7, one of the new features added was device management. In this initial release, only a small number of Cisco switches were supported. Overall the capabilities weren’t really significant, however the concept shifted people’s perception of the boundaries for configuration management. All of sudden Puppet didn’t end at the operating system, and extended to black boxes that were previously thought to be a bridge too far.</p>
 
 <p><img src="/images/inception_dream.gif" title="'dream big'" /></p>
 
@@ -98,17 +98,51 @@
   <li><a href="http://forge.puppetlabs.com/fatmcgav/netapp">Net App</a>: <a href="https://github.com/fatmcgav/fatmcgav-netapp">fatmcgav-netapp</a></li>
 </ul>
 
-<p>The benefits of having the entire infrastracture automated with a single tool chain under version control is indisputable. A Software Define Data Center is not complete until you gap the management capabilities whether it’s your network or storage. </p>
+<p>The benefits of having the entire infrastructure automated with a single tool chain under version control is indisputable. A Software Define Data Center is not complete until you gap the management capabilities whether it’s your network or storage. With that said, there’s still some limitations with puppet device. Currently, the device command only supports communication with a single device at a time. This is fine when the device is self contained, but in some instances it’s necessary to interact with a series of devices to perform a meaningful task. For this reason, we developed transport resource to support multiple connectivity for a single puppet execution. This is not a substitution for orchestration of a chain of events, but rather to group resources that have interactions between different devices:</p>
 
-<p>It’s clear after working with devices that any attempt to automate them must leverage their respective APIs. Without Netconf, iControl, NetApp SDK, non of the modules would been possible. Automation built purely around CLI interactions and output parsing would be extremely brittle.</p>
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="n">transport</span> <span class="p">{</span> <span class="s1">&#39;ssh&#39;</span><span class="p">:</span>
+</span><span class="line">  <span class="n">username</span> <span class="o">=&gt;</span> <span class="s1">&#39;root&#39;</span><span class="p">,</span>
+</span><span class="line">  <span class="n">password</span> <span class="o">=&gt;</span> <span class="s1">&#39;p@ss&#39;</span><span class="p">,</span>
+</span><span class="line">  <span class="n">server</span>   <span class="o">=&gt;</span> <span class="s1">&#39;192.168.1.10&#39;</span><span class="p">,</span>
+</span><span class="line">  <span class="c1"># support connection options in net::ssh :</span>
+</span><span class="line">  <span class="n">options</span>  <span class="o">=&gt;</span> <span class="p">{</span> <span class="s1">&#39;port&#39;</span> <span class="o">=&gt;</span> <span class="mi">10022</span> <span class="p">},</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="n">transport</span> <span class="p">{</span> <span class="s1">&#39;rest&#39;</span><span class="p">:</span>
+</span><span class="line">  <span class="n">username</span> <span class="o">=&gt;</span> <span class="s1">&#39;admin&#39;</span><span class="p">,</span>
+</span><span class="line">  <span class="n">password</span> <span class="o">=&gt;</span> <span class="s1">&#39;secret!&#39;</span><span class="p">,</span>
+</span><span class="line">  <span class="n">server</span>   <span class="o">=&gt;</span> <span class="s1">&#39;192.168.1.11&#39;</span><span class="p">,</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>Next week at <a href="http://communities.vmware.com/community/vmtn/partner-exchange">VMware Partners Exchange</a> (PEX 2013), <a href="http://nickapedia.com/2013/02/01/stuff-to-see-puppet-pex-and-more/">Nick Weaver</a> and Carl Caum will present more about Puppet and how it works with VMware Products at session VPN1298. We plan to provide VMware users with a set of Puppet modules for management of vCenter/vShield (vCloud Network and Security):</p>
+<p>A transport is shared and reused across several resources, and custom type/provider can leverage any transport connectivity:</p>
 
-<p><img src="/images/puppet_device.png" title="'Puppet and vSphere vShield API'" /></p>
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="c1"># this is a mockup</span>
+</span><span class="line"><span class="n">remote_service</span> <span class="p">{</span> <span class="s1">&#39;ntp&#39;</span><span class="p">:</span>
+</span><span class="line">  <span class="k">ensure</span>    <span class="o">=&gt;</span> <span class="n">running</span><span class="p">,</span>
+</span><span class="line">  <span class="n">transport</span> <span class="o">=&gt;</span> <span class="no">Transport</span><span class="o">[</span><span class="s1">&#39;ssh&#39;</span><span class="o">]</span><span class="p">,</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>Currently, puppet devices can only communicate with a single device at a time. After working with vShield API, it’s clear we needed the capabilities to communicate with multiple devices due to it’s dependency of <a href="http://kb.vmware.com/kb/1017126">vSphere Managed Object Reference (MoRef)</a>. ‘esx-13’ might be understandable to a computer, but for configuration purpose ‘test_esx_host’ would make much more sense to an admin. </p>
-
-<p>For this reason, we developed transport resource to support ssh, vSphere, and vShield connectivity for a single puppet execution:</p>
+<p>Here’s an example debug output showing ssh connectivity established and reused for 192.168.1.10 to perform a series of activity.</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -131,30 +165,72 @@
 <span class="line-number">19</span>
 <span class="line-number">20</span>
 <span class="line-number">21</span>
-</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="n">transport</span> <span class="p">{</span> <span class="s1">&#39;ssh&#39;</span><span class="p">:</span>
-</span><span class="line">  <span class="n">username</span> <span class="o">=&gt;</span> <span class="s1">&#39;nan&#39;</span><span class="p">,</span>
-</span><span class="line">  <span class="n">password</span> <span class="o">=&gt;</span> <span class="s1">&#39;secret&#39;</span><span class="p">,</span>
-</span><span class="line">  <span class="n">server</span>   <span class="o">=&gt;</span> <span class="s1">&#39;192.168.1.10&#39;</span><span class="p">,</span>
-</span><span class="line">  <span class="c1"># support connection options in net::ssh :</span>
-</span><span class="line">  <span class="n">options</span>  <span class="o">=&gt;</span> <span class="p">{</span> <span class="s1">&#39;port&#39;</span> <span class="o">=&gt;</span> <span class="mi">10022</span> <span class="p">},</span>
-</span><span class="line"><span class="p">}</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+</pre></td><td class="code"><pre><code class="console"><span class="line"><span class="go">debug: PuppetX::Puppetlabs::Transport::Ssh initializing connection to: 192.168.1.10</span>
+</span><span class="line"><span class="go">debug: Executing on 192.168.1.10:</span>
+</span><span class="line"><span class="go">vpxd_servicecfg eula read</span>
+</span><span class="line"><span class="go">debug: Execution result:</span>
+</span><span class="line"><span class="go">VC_EULA_STATUS=1</span>
+</span><span class="line"><span class="go">VC_CFG_RESULT=0</span>
 </span><span class="line">
-</span><span class="line"><span class="n">transport</span> <span class="p">{</span> <span class="s1">&#39;vshield&#39;</span><span class="p">:</span>
-</span><span class="line">  <span class="n">username</span> <span class="o">=&gt;</span> <span class="s1">&#39;admin&#39;</span><span class="p">,</span>
-</span><span class="line">  <span class="n">password</span> <span class="o">=&gt;</span> <span class="s1">&#39;default&#39;</span><span class="p">,</span>
-</span><span class="line">  <span class="n">server</span>   <span class="o">=&gt;</span> <span class="s1">&#39;vshield.lab&#39;</span>
-</span><span class="line"><span class="p">}</span>
+</span><span class="line"><span class="go">debug: Executing on 192.168.1.10:</span>
+</span><span class="line"><span class="go">vpxd_servicecfg db read</span>
+</span><span class="line"><span class="go">debug: Execution result:</span>
+</span><span class="line"><span class="go">VC_DB_TYPE=embedded</span>
+</span><span class="line"><span class="go">VC_DB_SERVER=</span>
+</span><span class="line"><span class="go">VC_DB_SERVER_PORT=</span>
+</span><span class="line"><span class="go">VC_DB_INSTANCE=</span>
+</span><span class="line"><span class="go">VC_DB_USER=</span>
+</span><span class="line"><span class="go">VC_DB_SCHEMA_VERSION=</span>
+</span><span class="line"><span class="go">VC_CFG_RESULT=0</span>
 </span><span class="line">
-</span><span class="line"><span class="n">transport</span> <span class="p">{</span> <span class="s1">&#39;vcenter&#39;</span><span class="p">:</span>
-</span><span class="line">  <span class="n">username</span> <span class="o">=&gt;</span> <span class="s1">&#39;root&#39;</span><span class="p">,</span>
-</span><span class="line">  <span class="n">password</span> <span class="o">=&gt;</span> <span class="s1">&#39;vmware&#39;</span><span class="p">,</span>
-</span><span class="line">  <span class="n">server</span>   <span class="o">=&gt;</span> <span class="s1">&#39;vcenter.lab&#39;</span><span class="p">,</span>
-</span><span class="line">  <span class="c1"># support RbVmomi options:</span>
-</span><span class="line">  <span class="n">options</span>  <span class="o">=&gt;</span> <span class="p">{</span> <span class="s1">&#39;insecure&#39;</span> <span class="o">=&gt;</span> <span class="kp">true</span><span class="p">,</span> <span class="p">},</span>
-</span><span class="line"><span class="p">}</span>
+</span><span class="line"><span class="go">debug: Executing on 192.168.1.10:</span>
+</span><span class="line"><span class="go">vpxd_servicecfg sso read</span>
+</span><span class="line"><span class="go">debug: Execution result:</span>
+</span><span class="line"><span class="go">SSO_TYPE=embedded</span>
+</span><span class="line"><span class="go">SSO_LS_LOCATION=https://192.168.1.10:7444/lookupservice/sdk</span>
+</span><span class="line"><span class="go">SSO_DB_TYPE=embedded</span>
+</span><span class="line"><span class="go">SSO_DB_SERVER=localhost</span>
+</span><span class="line"><span class="go">SSO_DB_SERVER_PORT=5432</span>
+</span><span class="line"><span class="go">SSO_DB_INSTANCE=ssodb</span>
+</span><span class="line"><span class="go">SSO_DB_USER=ssod</span>
+</span><span class="line"><span class="go">SSO_DB_PASSWORD=</span>
+</span><span class="line"><span class="go">VC_CFG_RESULT=0</span>
+</span><span class="line">
+</span><span class="line"><span class="go">debug: Executing on 192.168.1.10:</span>
+</span><span class="line"><span class="go">vpxd_servicecfg service status</span>
+</span><span class="line"><span class="go">debug: Execution result:</span>
+</span><span class="line"><span class="go">VC_SERVICE_STATUS=1</span>
+</span><span class="line"><span class="go">VC_CFG_RESULT=0</span>
+</span><span class="line">
+</span><span class="line"><span class="go">debug: Finishing transaction 2205823080</span>
+</span><span class="line"><span class="go">debug: Closing PuppetX::Puppetlabs::Transport::Ssh connection to: 192.168.1.10</span>
+</span><span class="line"><span class="go">debug: Storing state</span>
+</span><span class="line"><span class="go">debug: Stored state in 0.07 seconds</span>
+</span><span class="line"><span class="go">notice: Finished catalog run in 2.90 seconds</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>A resource can leverage any transport connectivity:</p>
+<p>In the example above, a single ssh connection was established at the beginning, and closed at the end of the session. This was one of the roadblock <a href="https://twitter.com/nwkautomaniac">Jeremy Schulman</a> brought up when developing network devices NETCONF sessions. Originally I suggested a resource responsible for closing the connections that had automatic dependencies to the correct network resources since there was no API to do this in the provider<sup id="fnref:fn-tickets"><a href="#fn:fn-tickets" rel="footnote">2</a></sup>. However this doesn’t take in consideration for resources failures which results in dangling open connections. Ultimately, I went back to Jeremy’s  started with Puppet::Transaction:</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -166,24 +242,29 @@
 <span class="line-number">8</span>
 <span class="line-number">9</span>
 <span class="line-number">10</span>
-</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="n">vcsa_eula</span> <span class="p">{</span> <span class="vg">$name</span><span class="p">:</span>
-</span><span class="line">  <span class="k">ensure</span>    <span class="o">=&gt;</span> <span class="n">accept</span><span class="p">,</span>
-</span><span class="line">  <span class="n">transport</span> <span class="o">=&gt;</span> <span class="no">Transport</span><span class="o">[</span><span class="s1">&#39;ssh&#39;</span><span class="o">]</span><span class="p">,</span>
-</span><span class="line"><span class="p">}</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="k">module</span> <span class="nn">Puppet</span>
+</span><span class="line">  <span class="k">class</span> <span class="nc">Transaction</span>
+</span><span class="line">    <span class="n">alias_method</span> <span class="ss">:evaluate_original</span><span class="p">,</span> <span class="ss">:evaluate</span>
 </span><span class="line">
-</span><span class="line"><span class="n">vc_datacenter</span> <span class="p">{</span> <span class="s1">&#39;datacenter1&#39;</span><span class="p">:</span>
-</span><span class="line">  <span class="n">path</span>      <span class="o">=&gt;</span> <span class="s1">&#39;/datacenter1&#39;</span><span class="p">,</span>
-</span><span class="line">  <span class="k">ensure</span>    <span class="o">=&gt;</span> <span class="n">present</span><span class="p">,</span>
-</span><span class="line">  <span class="n">transport</span> <span class="o">=&gt;</span> <span class="no">Transport</span><span class="o">[</span><span class="s1">&#39;vcenter&#39;</span><span class="o">]</span><span class="p">,</span>
-</span><span class="line"><span class="p">}</span>
+</span><span class="line">    <span class="k">def</span> <span class="nf">evaluate</span>
+</span><span class="line">      <span class="n">evaluate_original</span>
+</span><span class="line">      <span class="ss">PuppetX</span><span class="p">:</span><span class="ss">:Puppetlabs</span><span class="o">::</span><span class="no">Transport</span><span class="o">.</span><span class="n">cleanup</span>
+</span><span class="line">    <span class="k">end</span>
+</span><span class="line">  <span class="k">end</span>
+</span><span class="line"><span class="k">end</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>Hopefully this gave a good glimpse without revealing too much ahead of the event. Stay tuned, and I will provide more techinical details next week after PEX.</p>
+<p>This isn’t the cleanest solution, since it monkey patches Puppet’s internal, and does not trap user termination of Puppet, but it is more reliable then depending on every resource succeeding. Thanks again to Jeremy’s original work with transaction.rb which led me down to this path, and my original suggestion was a bit short sighted. For now this is a work around, while I wait for Puppet Labs come up with a formal solution to <a href="http://projects.puppetlabs.com/issues/3946">#3946</a>.</p>
+
+<p>Next week at <a href="http://communities.vmware.com/community/vmtn/partner-exchange">VMware Partners Exchange</a> (PEX 2013), <a href="http://nickapedia.com/2013/02/01/stuff-to-see-puppet-pex-and-more/">Nick Weaver</a> and Carl Caum will present more about Puppet and how it works with VMware Products at session VPN1298. This is just a tiny sneak preview, so please attend to get the complete picture. Stay tuned, and I will provide more technical details about what we are using Puppet for next week after the PEX announcement.</p>
 
 <div class="footnotes">
   <ol>
     <li id="fn:fn-juniper">
       <p>Juniper has gone as far as embedding Puppet agent to the device.<a href="#fnref:fn-juniper" rel="reference">&#8617;</a></p>
+    </li>
+    <li id="fn:fn-tickets">
+      <p>See <a href="http://projects.puppetlabs.com/issues/3946">#3946</a>. Work on Puppet long enough, you’ll find tickets indicating Dan has explored these dark corners before anyone else.<a href="#fnref:fn-tickets" rel="reference">&#8617;</a></p>
     </li>
   </ol>
 </div>
@@ -210,7 +291,7 @@
 	<div class="tags">
 
 
-	<a class='category' href='/blog/categories/devices/'>devices</a>, <a class='category' href='/blog/categories/puppet/'>puppet</a>
+	<a class='category' href='/blog/categories/device/'>device</a>, <a class='category' href='/blog/categories/puppet/'>puppet</a>
 
 
 </div>
