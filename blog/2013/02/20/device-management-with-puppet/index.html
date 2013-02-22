@@ -221,7 +221,7 @@
 </span><span class="line"><span class="go">notice: Finished catalog run in 2.90 seconds</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>In the example above, a single ssh connection was established at the beginning, and closed at the end of the session. This was one of the roadblock <a href="https://twitter.com/nwkautomaniac">Jeremy Schulman</a> brought up when developing network devices NETCONF sessions. Originally I suggested a resource responsible for closing the connections that had automatic dependencies to the correct network resources since there was no API to do this in the provider<sup id="fnref:fn-tickets"><a href="#fn:fn-tickets" rel="footnote">2</a></sup>. However this doesn’t take in consideration for resources failures which results in dangling open connections. Ultimately, I went back to Jeremy’s  started with Puppet::Transaction:</p>
+<p>In the example above, a single ssh connection was established at the beginning, and closed at the end of the session. This was one of the roadblock <a href="https://twitter.com/nwkautomaniac">Jeremy Schulman</a> brought up when developing network devices NETCONF sessions. Originally I suggested a resource responsible for closing the connections that had automatic dependencies to the correct network resources since there was no API to do this in the provider<sup id="fnref:fn-tickets"><a href="#fn:fn-tickets" rel="footnote">2</a></sup>. However this doesn’t take in consideration for resources failures which results in dangling open connections. Ultimately, I went back to Puppet::Transaction and adding the connection cleanup at the end of evaluate method:</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -245,9 +245,9 @@
 </span><span class="line"><span class="k">end</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>This isn’t the cleanest solution, since it monkey patches Puppet’s internal, and does not trap user termination of Puppet, but it is more reliable then depending on every resource succeeding. Thanks again to Jeremy’s original work with transaction.rb which led me down to this path, and my original suggestion was a bit short sighted. For now this is a work around, while I wait for Puppet Labs come up with a formal solution to <a href="http://projects.puppetlabs.com/issues/3946">#3946</a>.</p>
+<p>This isn’t the cleanest solution, since it monkey patches Puppet’s internal, and does not trap user termination of Puppet, but it is more reliable then depending on every resource succeeding. Thanks again to Jeremy’s original work with transaction.rb which led me down this path. For now this is a work around, while we wait for Puppet Labs come up with a formal solution to <a href="http://projects.puppetlabs.com/issues/3946">#3946</a>.</p>
 
-<p>Next week at <a href="http://communities.vmware.com/community/vmtn/partner-exchange">VMware Partners Exchange</a> (PEX 2013), <a href="http://nickapedia.com/2013/02/01/stuff-to-see-puppet-pex-and-more/">Nick Weaver</a> and Carl Caum will present more about Puppet and how it works with VMware Products at session VPN1298. This is just a tiny sneak preview, so please attend to get the complete picture. Stay tuned, and I will provide more technical details about what we are using Puppet for next week after the PEX announcement.</p>
+<p>Next week at <a href="http://communities.vmware.com/community/vmtn/partner-exchange">VMware Partners Exchange</a> (PEX 2013), <a href="http://nickapedia.com/2013/02/01/stuff-to-see-puppet-pex-and-more/">Nick Weaver</a> and Carl Caum will present more about Puppet and how it works with VMware Products at session VPN1298. This is just a sneak preview, so please attend to get the complete picture. Stay tuned, and I will provide more technical details about what we are using Puppet for next week after the PEX announcement.</p>
 
 <div class="footnotes">
   <ol>
