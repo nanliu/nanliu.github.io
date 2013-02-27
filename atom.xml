@@ -4,7 +4,7 @@
   <title><![CDATA[电脑]]></title>
   <link href="http://nanliu.github.com/atom.xml" rel="self"/>
   <link href="http://nanliu.github.com/"/>
-  <updated>2013-02-21T21:52:58-08:00</updated>
+  <updated>2013-02-27T13:11:40-08:00</updated>
   <id>http://nanliu.github.com/</id>
   <author>
     <name><![CDATA[Nan Liu]]></name>
@@ -12,6 +12,363 @@
   </author>
   <generator uri="http://octopress.org/">Octopress</generator>
 
+  
+  <entry>
+    <title type="html"><![CDATA[Puppet Managing vCenter and vShield]]></title>
+    <link href="http://nanliu.github.com/blog/2013/02/27/puppet-managing-vcenter-and-vshield/"/>
+    <updated>2013-02-27T08:00:00-08:00</updated>
+    <id>http://nanliu.github.com/blog/2013/02/27/puppet-managing-vcenter-and-vshield</id>
+    <content type="html"><![CDATA[<p>Today, we released a set of <a href="https://github.com/vmware/">open source Puppet modules</a> for managing <a href="http://www.vmware.com/products/vcenter-server/overview.html">vCenter</a> Server Appliance 5.1 and <a href="http://www.vmware.com/products/datacenter-virtualization/vcloud-network-security/overview.html">vCloud Network and Security</a> 5.1 (vCNS previously known as vShield). They provide a framework for managing resources within vCenter and vCNS via Puppet<sup id="fnref:fn-nick"><a href="#fn:fn-nick" rel="footnote">1</a></sup>.</p>
+
+<p><img src="http://nanliu.github.com/images/puppet_device.png" title="'Puppet and vSphere vShield API'" /></p>
+
+<p>The modules can be obtained from github, and installed with the following librarian Puppetfile:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="n">mod</span> <span class="s2">&quot;puppetlabs/stdlib&quot;</span>
+</span><span class="line"><span class="n">mod</span> <span class="s2">&quot;nanliu/staging&quot;</span>
+</span><span class="line"><span class="n">mod</span> <span class="s2">&quot;vmware_lib&quot;</span><span class="p">,</span> <span class="ss">:git</span> <span class="o">=&gt;</span> <span class="s2">&quot;git://github.com/vmware/vmware-vmware_lib.git&quot;</span>
+</span><span class="line"><span class="n">mod</span> <span class="s2">&quot;vcsa&quot;</span><span class="p">,</span>       <span class="ss">:git</span> <span class="o">=&gt;</span> <span class="s2">&quot;git://github.com/vmware/vmware-vcsa.git&quot;</span>
+</span><span class="line"><span class="n">mod</span> <span class="s2">&quot;vcenter&quot;</span><span class="p">,</span>    <span class="ss">:git</span> <span class="o">=&gt;</span> <span class="s2">&quot;git://github.com/vmware/vmware-vcenter.git&quot;</span>
+</span><span class="line"><span class="n">mod</span> <span class="s2">&quot;vshield&quot;</span><span class="p">,</span>    <span class="ss">:git</span> <span class="o">=&gt;</span> <span class="s2">&quot;git://github.com/vmware/vmware-vshield.git&quot;</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The puppet management host needs to have connectivity with vCenter and vCNS appliance. We are currently using a custom version of <a href="https://github.com/vmware/rbvmomi">RbVmomi</a> which has been included in the module. The management host should deploy all dependent software packages before managing any vCenter/vCNS resources:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="n">node</span> <span class="s1">&#39;management_server&#39;</span> <span class="p">{</span>
+</span><span class="line">  <span class="kp">include</span> <span class="s1">&#39;vcenter::package&#39;</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>One of the gems in the package requires nokogiri. If you use Puppet Enterprise, install the pe-rubygem-nokogiri package on the management host (it’s not typically installed for agents). See <a href="http://nokogiri.org/tutorials/installing_nokogiri.html">Nokogiri documentation</a> for additional information for open source puppet agents.</p>
+
+<p>In last week’s <a href="http://nanliu.github.com/blog/2013/02/20/device-management-with-puppet/">sneak preview</a>, I showed the debugging output for ssh transport. For the observant readers, those commands were the steps to initialize vCenter Server Appliance<sup id="fnref:fn-will"><a href="#fn:fn-will" rel="footnote">2</a></sup>:</p>
+
+<p><img src="http://nanliu.github.com/images/vcsa_ssh.png" title="'vCenter Server Appliance initialization'" /></p>
+
+<p>This is the corresponding Puppet manifests<sup id="fnref:fn-import"><a href="#fn:fn-import" rel="footnote">3</a></sup>:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="n">vcsa</span> <span class="p">{</span> <span class="s1">&#39;demo&#39;</span><span class="p">:</span>
+</span><span class="line">  <span class="n">username</span> <span class="o">=&gt;</span> <span class="s1">&#39;root&#39;</span><span class="p">,</span>
+</span><span class="line">  <span class="n">password</span> <span class="o">=&gt;</span> <span class="s1">&#39;vmware&#39;</span><span class="p">,</span>
+</span><span class="line">  <span class="n">server</span>   <span class="o">=&gt;</span> <span class="s1">&#39;192.168.1.10&#39;</span><span class="p">,</span>
+</span><span class="line">  <span class="n">db_type</span>  <span class="o">=&gt;</span> <span class="s1">&#39;embedded&#39;</span><span class="p">,</span>
+</span><span class="line">  <span class="n">capacity</span> <span class="o">=&gt;</span> <span class="s1">&#39;m&#39;</span><span class="p">,</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>If we dig into the define resources type, it simply passes the user account to the ssh transport and initialize the device in the appropriate sequence:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="n">define</span> <span class="n">vcsa</span> <span class="p">(</span>
+</span><span class="line"><span class="o">.</span><span class="n">.</span><span class="o">.</span>
+</span><span class="line"><span class="p">)</span> <span class="p">{</span>
+</span><span class="line">  <span class="n">transport</span> <span class="p">{</span> <span class="vg">$name</span><span class="p">:</span>
+</span><span class="line">    <span class="n">username</span> <span class="o">=&gt;</span> <span class="vg">$username</span><span class="p">,</span>
+</span><span class="line">    <span class="n">password</span> <span class="o">=&gt;</span> <span class="vg">$password</span><span class="p">,</span>
+</span><span class="line">    <span class="n">server</span>   <span class="o">=&gt;</span> <span class="vg">$server</span><span class="p">,</span>
+</span><span class="line">  <span class="p">}</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">vcsa_eula</span> <span class="p">{</span> <span class="vg">$name</span><span class="p">:</span>
+</span><span class="line">    <span class="k">ensure</span>    <span class="o">=&gt;</span> <span class="n">accept</span><span class="p">,</span>
+</span><span class="line">    <span class="n">transport</span> <span class="o">=&gt;</span> <span class="no">Transport</span><span class="o">[</span><span class="vg">$name</span><span class="o">]</span><span class="p">,</span>
+</span><span class="line">  <span class="p">}</span> <span class="o">-&gt;</span>
+</span><span class="line">
+</span><span class="line">  <span class="n">vcsa_db</span> <span class="p">{</span> <span class="vg">$name</span><span class="p">:</span>
+</span><span class="line">    <span class="k">ensure</span>    <span class="o">=&gt;</span> <span class="n">present</span><span class="p">,</span>
+</span><span class="line">    <span class="n">type</span>      <span class="o">=&gt;</span> <span class="vg">$db_type</span>
+</span><span class="line">  <span class="o">.</span><span class="n">.</span><span class="o">.</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>Once vCenter Server appliance is initialized we can manage vCenter resources using the vSphere API. The example below specifies a vSphere API transport, along with datacenter, cluster, and an ESX host<sup id="fnref:fn-windows"><a href="#fn:fn-windows" rel="footnote">4</a></sup>:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+<span class="line-number">38</span>
+<span class="line-number">39</span>
+<span class="line-number">40</span>
+<span class="line-number">41</span>
+<span class="line-number">42</span>
+<span class="line-number">43</span>
+<span class="line-number">44</span>
+<span class="line-number">45</span>
+<span class="line-number">46</span>
+<span class="line-number">47</span>
+<span class="line-number">48</span>
+<span class="line-number">49</span>
+<span class="line-number">50</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="n">transport</span> <span class="p">{</span> <span class="s1">&#39;vcenter&#39;</span><span class="p">:</span>
+</span><span class="line">  <span class="n">username</span> <span class="o">=&gt;</span> <span class="s1">&#39;root&#39;</span><span class="p">,</span>
+</span><span class="line">  <span class="n">password</span> <span class="o">=&gt;</span> <span class="s1">&#39;vmware&#39;</span><span class="p">,</span>
+</span><span class="line">  <span class="n">server</span>   <span class="o">=&gt;</span> <span class="s1">&#39;192.168.1.10&#39;</span><span class="p">,</span>
+</span><span class="line">  <span class="c1"># see rbvmomi documentation for available options:</span>
+</span><span class="line">  <span class="n">options</span>  <span class="o">=&gt;</span> <span class="p">{</span> <span class="s1">&#39;insecure&#39;</span> <span class="o">=&gt;</span> <span class="kp">true</span> <span class="p">},</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="n">vc_datacenter</span> <span class="p">{</span> <span class="s1">&#39;dc1&#39;</span><span class="p">:</span>
+</span><span class="line">  <span class="k">ensure</span>    <span class="o">=&gt;</span> <span class="n">present</span><span class="p">,</span>
+</span><span class="line">  <span class="n">path</span>      <span class="o">=&gt;</span> <span class="s1">&#39;/dc1&#39;</span><span class="p">,</span>
+</span><span class="line">  <span class="n">transport</span> <span class="o">=&gt;</span> <span class="no">Transport</span><span class="o">[</span><span class="s1">&#39;vcenter&#39;</span><span class="o">]</span><span class="p">,</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="n">vc_cluster</span> <span class="p">{</span> <span class="s1">&#39;/dc1/clu1&#39;</span><span class="p">:</span>
+</span><span class="line">  <span class="k">ensure</span>    <span class="o">=&gt;</span> <span class="n">present</span><span class="p">,</span>
+</span><span class="line">  <span class="n">transport</span> <span class="o">=&gt;</span> <span class="no">Transport</span><span class="o">[</span><span class="s1">&#39;vcenter&#39;</span><span class="o">]</span><span class="p">,</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="n">vc_cluster_drs</span> <span class="p">{</span> <span class="s1">&#39;/dc1/clu1&#39;</span><span class="p">:</span>
+</span><span class="line">  <span class="nb">require</span>   <span class="o">=&gt;</span> <span class="no">Vc_cluster</span><span class="o">[</span><span class="s1">&#39;/dc1/clu1&#39;</span><span class="o">]</span><span class="p">,</span>
+</span><span class="line">  <span class="n">before</span>    <span class="o">=&gt;</span> <span class="no">Anchor</span><span class="o">[</span><span class="s1">&#39;/dc1/clu1&#39;</span><span class="o">]</span><span class="p">,</span>
+</span><span class="line">  <span class="n">transport</span> <span class="o">=&gt;</span> <span class="no">Transport</span><span class="o">[</span><span class="s1">&#39;vcenter&#39;</span><span class="o">]</span><span class="p">,</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="n">vc_cluster_evc</span> <span class="p">{</span> <span class="s1">&#39;/dc1/clu1&#39;</span><span class="p">:</span>
+</span><span class="line">  <span class="nb">require</span>   <span class="o">=&gt;</span> <span class="o">[</span>
+</span><span class="line">    <span class="no">Vc_cluster</span><span class="o">[</span><span class="s1">&#39;/dc1/clu1&#39;</span><span class="o">]</span><span class="p">,</span>
+</span><span class="line">    <span class="no">Vc_cluster_drs</span><span class="o">[</span><span class="s1">&#39;/dc1/clu1&#39;</span><span class="o">]</span><span class="p">,</span>
+</span><span class="line">  <span class="o">]</span><span class="p">,</span>
+</span><span class="line">  <span class="n">before</span>    <span class="o">=&gt;</span> <span class="no">Anchor</span><span class="o">[</span><span class="s1">&#39;/dc1/clu1&#39;</span><span class="o">]</span><span class="p">,</span>
+</span><span class="line">  <span class="n">transport</span> <span class="o">=&gt;</span> <span class="no">Transport</span><span class="o">[</span><span class="s1">&#39;vcenter&#39;</span><span class="o">]</span><span class="p">,</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="n">anchor</span> <span class="p">{</span> <span class="s1">&#39;/dc1/clu1&#39;</span><span class="p">:</span> <span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="ss">vcenter</span><span class="p">:</span><span class="ss">:host</span> <span class="p">{</span> <span class="s1">&#39;esx1&#39;</span><span class="p">:</span>
+</span><span class="line">  <span class="n">path</span>      <span class="o">=&gt;</span> <span class="s1">&#39;/dc1/clu1&quot;,</span>
+</span><span class="line"><span class="s1">  username  =&gt; &#39;</span><span class="n">root</span><span class="s1">&#39;,</span>
+</span><span class="line"><span class="s1">  password  =&gt; &#39;</span><span class="n">esx_password</span><span class="s1">&#39;,</span>
+</span><span class="line"><span class="s1">  dateTimeConfig =&gt; {</span>
+</span><span class="line"><span class="s1">    &#39;</span><span class="n">ntpConfig</span><span class="s1">&#39; =&gt; {</span>
+</span><span class="line"><span class="s1">      &#39;</span><span class="n">server</span><span class="s1">&#39; =&gt; &#39;</span><span class="n">us</span><span class="o">.</span><span class="n">ntp</span><span class="o">.</span><span class="n">pool</span><span class="o">.</span><span class="n">org</span><span class="s1">&#39;,</span>
+</span><span class="line"><span class="s1">    },</span>
+</span><span class="line"><span class="s1">    &#39;</span><span class="n">timeZone</span><span class="s1">&#39; =&gt; {</span>
+</span><span class="line"><span class="s1">      &#39;</span><span class="n">key</span><span class="s1">&#39; =&gt; &#39;</span><span class="no">UTC</span><span class="s1">&#39;,</span>
+</span><span class="line"><span class="s1">    },</span>
+</span><span class="line"><span class="s1">  },</span>
+</span><span class="line"><span class="s1">  transport =&gt; Transport[&#39;</span><span class="n">vcenter</span><span class="err">&#39;</span><span class="o">]</span><span class="p">,</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>The next task is to connect vCloud Network and Security appliance to a vCenter appliance to form a cell:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="n">transport</span> <span class="p">{</span> <span class="s1">&#39;vshield&#39;</span><span class="p">:</span>
+</span><span class="line">  <span class="n">username</span> <span class="o">=&gt;</span> <span class="s1">&#39;admin&#39;</span><span class="p">,</span>
+</span><span class="line">  <span class="n">password</span> <span class="o">=&gt;</span> <span class="s1">&#39;default&#39;</span><span class="p">,</span>
+</span><span class="line">  <span class="n">server</span>   <span class="o">=&gt;</span> <span class="s1">&#39;192.168.1.11&#39;</span><span class="p">,</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="n">vshield_global_config</span> <span class="p">{</span> <span class="vg">$vshield</span><span class="o">[</span><span class="s1">&#39;server&#39;</span><span class="o">]</span><span class="p">:</span>
+</span><span class="line">  <span class="n">vc_info</span>   <span class="o">=&gt;</span> <span class="p">{</span>
+</span><span class="line">    <span class="n">ip_address</span> <span class="o">=&gt;</span> <span class="s1">&#39;192.168.1.10&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="n">user_name</span>  <span class="o">=&gt;</span> <span class="s1">&#39;admin&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="n">password</span>   <span class="o">=&gt;</span> <span class="s1">&#39;default&#39;</span><span class="p">,</span>
+</span><span class="line">  <span class="p">},</span>
+</span><span class="line">  <span class="n">time_info</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="s1">&#39;ntp_server&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;us.pool.ntp.org&#39;</span> <span class="p">},</span>
+</span><span class="line">  <span class="n">dns_info</span>  <span class="o">=&gt;</span> <span class="p">{</span> <span class="s1">&#39;primary_dns&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;8.8.8.8&#39;</span> <span class="p">},</span>
+</span><span class="line">  <span class="n">transport</span> <span class="o">=&gt;</span> <span class="no">Transport</span><span class="o">[</span><span class="s1">&#39;vshield&#39;</span><span class="o">]</span><span class="p">,</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>In vShield API, all vCenter resources are referred by the <a href="http://kb.vmware.com/kb/1017126">vSphere Managed Object Reference (MoRef)</a>. ‘esx-13’ might be understandable to a computer, but for configuration purpose the name of the ESX host would make much more sense to an admin. For this reason, we developed the transport resource to support multiple connectivity during a single puppet execution:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+<span class="line-number">4</span>
+<span class="line-number">5</span>
+<span class="line-number">6</span>
+<span class="line-number">7</span>
+<span class="line-number">8</span>
+<span class="line-number">9</span>
+<span class="line-number">10</span>
+<span class="line-number">11</span>
+<span class="line-number">12</span>
+<span class="line-number">13</span>
+<span class="line-number">14</span>
+<span class="line-number">15</span>
+<span class="line-number">16</span>
+<span class="line-number">17</span>
+<span class="line-number">18</span>
+<span class="line-number">19</span>
+<span class="line-number">20</span>
+<span class="line-number">21</span>
+<span class="line-number">22</span>
+<span class="line-number">23</span>
+<span class="line-number">24</span>
+<span class="line-number">25</span>
+<span class="line-number">26</span>
+<span class="line-number">27</span>
+<span class="line-number">28</span>
+<span class="line-number">29</span>
+<span class="line-number">30</span>
+<span class="line-number">31</span>
+<span class="line-number">32</span>
+<span class="line-number">33</span>
+<span class="line-number">34</span>
+<span class="line-number">35</span>
+<span class="line-number">36</span>
+<span class="line-number">37</span>
+</pre></td><td class="code"><pre><code class="ruby"><span class="line"><span class="n">transport</span> <span class="p">{</span> <span class="s1">&#39;vcenter&#39;</span><span class="p">:</span>
+</span><span class="line">  <span class="n">username</span> <span class="o">=&gt;</span> <span class="s1">&#39;root&#39;</span><span class="p">,</span>
+</span><span class="line">  <span class="n">password</span> <span class="o">=&gt;</span> <span class="s1">&#39;vmware&#39;</span><span class="p">,</span>
+</span><span class="line">  <span class="n">server</span>   <span class="o">=&gt;</span> <span class="s1">&#39;192.168.1.10&#39;</span><span class="p">,</span>
+</span><span class="line">  <span class="n">options</span>  <span class="o">=&gt;</span> <span class="p">{</span> <span class="s1">&#39;insecure&#39;</span> <span class="o">=&gt;</span> <span class="kp">true</span> <span class="p">},</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="n">transport</span> <span class="p">{</span> <span class="s1">&#39;vshield&#39;</span><span class="p">:</span>
+</span><span class="line">  <span class="n">username</span> <span class="o">=&gt;</span> <span class="s1">&#39;admin&#39;</span><span class="p">,</span>
+</span><span class="line">  <span class="n">password</span> <span class="o">=&gt;</span> <span class="s1">&#39;default&#39;</span><span class="p">,</span>
+</span><span class="line">  <span class="n">server</span>   <span class="o">=&gt;</span> <span class="s1">&#39;192.168.1.11&#39;</span><span class="p">,</span>
+</span><span class="line"><span class="p">}</span>
+</span><span class="line">
+</span><span class="line"><span class="n">vshield_edge</span> <span class="p">{</span> <span class="s1">&#39;192.168.1.11:dmz&#39;</span><span class="p">:</span>
+</span><span class="line">  <span class="k">ensure</span>             <span class="o">=&gt;</span> <span class="n">present</span><span class="p">,</span>
+</span><span class="line">  <span class="n">datacenter_name</span>    <span class="o">=&gt;</span> <span class="s1">&#39;dc1&#39;</span><span class="p">,</span>
+</span><span class="line">  <span class="n">resource_pool_name</span> <span class="o">=&gt;</span> <span class="s1">&#39;clu1&#39;</span><span class="p">,</span>
+</span><span class="line">  <span class="n">enable_aesni</span>       <span class="o">=&gt;</span> <span class="kp">false</span><span class="p">,</span>
+</span><span class="line">  <span class="n">enable_fips</span>        <span class="o">=&gt;</span> <span class="kp">false</span><span class="p">,</span>
+</span><span class="line">  <span class="n">enable_tcp_loose</span>   <span class="o">=&gt;</span> <span class="kp">false</span><span class="p">,</span>
+</span><span class="line">  <span class="n">vse_log_level</span>      <span class="o">=&gt;</span> <span class="s1">&#39;info&#39;</span><span class="p">,</span>
+</span><span class="line">  <span class="n">fqdn</span>               <span class="o">=&gt;</span> <span class="s1">&#39;dmz.vm&#39;</span><span class="p">,</span>
+</span><span class="line">  <span class="n">vnics</span>              <span class="o">=&gt;</span> <span class="o">[</span>
+</span><span class="line">    <span class="p">{</span> <span class="nb">name</span>          <span class="o">=&gt;</span> <span class="s1">&#39;uplink-test&#39;</span><span class="p">,</span>
+</span><span class="line">      <span class="n">portgroupName</span> <span class="o">=&gt;</span> <span class="s1">&#39;VM Network&#39;</span><span class="p">,</span>
+</span><span class="line">      <span class="n">type</span>          <span class="o">=&gt;</span> <span class="s2">&quot;Uplink&quot;</span><span class="p">,</span>
+</span><span class="line">      <span class="n">isConnected</span>   <span class="o">=&gt;</span> <span class="s2">&quot;true&quot;</span><span class="p">,</span>
+</span><span class="line">      <span class="n">addressGroups</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span><span class="line">        <span class="s2">&quot;addressGroup&quot;</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span><span class="line">          <span class="s2">&quot;primaryAddress&quot;</span> <span class="o">=&gt;</span> <span class="s2">&quot;192.168.2.1&quot;</span><span class="p">,</span>
+</span><span class="line">          <span class="s2">&quot;subnetMask&quot;</span>     <span class="o">=&gt;</span> <span class="s2">&quot;255.255.255.128&quot;</span><span class="p">,</span>
+</span><span class="line">        <span class="p">},</span>
+</span><span class="line">      <span class="p">},</span>
+</span><span class="line">    <span class="p">},</span>
+</span><span class="line">  <span class="o">]</span><span class="p">,</span>
+</span><span class="line">  <span class="n">transport</span>  <span class="o">=&gt;</span> <span class="no">Transport</span><span class="o">[</span><span class="s1">&#39;vshield&#39;</span><span class="o">]</span><span class="p">,</span>
+</span><span class="line"><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>This should provide general overview for the module capabilities. Additional resources are available beyond what’s covered in this post, however they do not offer comprehensive coverage of the vSphere and vShield API. I hope other users will find this module useful for your environment.</p>
+
+<p>Thanks again for the support from R&amp;D team at VMware, and especially Randy Brown and Shawn Holland for contributing the vCenter and vShield module. Also thanks to Rich Lane for releasing RbVmomi, and support from Christian Dickmann for resolving an issue in that library.</p>
+
+<h3 id="reference">Reference:</h3>
+
+<p>VMware github repository:</p>
+
+<ul>
+  <li><a href="https://github.com/vmware/vmware-vmware_lib">vmare_lib</a></li>
+  <li><a href="https://github.com/vmware/vmware-vcsa">vcsa</a></li>
+  <li><a href="https://github.com/vmware/vmware-vcenter">vcenter</a></li>
+  <li><a href="https://github.com/vmware/vmware-vshield">vshield</a></li>
+</ul>
+
+<p>Video walkthrough:</p>
+
+<div class="embed-video-container"><iframe src="http://player.vimeo.com/video/60628331 "></iframe></div>
+
+<div class="footnotes">
+  <ol>
+    <li id="fn:fn-nick">
+      <p>See <a href="http://nickapedia.com/2013/02/27/vmware-puppet-one-more-step-forward">Nick’s blog post</a> for more info.<a href="#fnref:fn-nick" rel="reference">&#8617;</a></p>
+    </li>
+    <li id="fn:fn-will">
+      <p>Thanks to <a href="http://www.virtuallyghetto.com/2012/02/automating-vcenter-server-appliance.html">Will Lam’s post on vCenter appliance</a>.<a href="#fnref:fn-will" rel="reference">&#8617;</a></p>
+    </li>
+    <li id="fn:fn-import">
+      <p>In the module test manifests “import ‘data.pp’” is a pattern to simplify testing for developers in different environments, please do not use import function for your production puppet manifests.<a href="#fnref:fn-import" rel="reference">&#8617;</a></p>
+    </li>
+    <li id="fn:fn-windows">
+      <p>Also the resources should work against a vCenter installation on Windows, however it hasn’t been tested.<a href="#fnref:fn-windows" rel="reference">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
+]]></content>
+  </entry>
   
   <entry>
     <title type="html"><![CDATA[Device Management with Puppet]]></title>
@@ -314,7 +671,7 @@ from /usr/local/bin/brew:17
     <link href="http://nanliu.github.com/blog/2013/01/01/from-typhoon-to-computers/"/>
     <updated>2013-01-01T10:21:00-08:00</updated>
     <id>http://nanliu.github.com/blog/2013/01/01/from-typhoon-to-computers</id>
-    <content type="html"><![CDATA[<p>Translations tend to have this weird effect of imbuing additional meanings the original language didn’t intend to contain. One of the possible origins for the word Typhoon is the Chinese pronunciation of “East Wind”(东风) <sup id="fnref:fn-jstor"><a href="#fn:fn-jstor" rel="footnote">1</a></sup>. Interestingly enough, the word has been imported back to Chinese phonetically as “Typhoon”(台风) with a completely different meaning than the original word east wind.</p>
+    <content type="html"><![CDATA[<p>Translations tend to have this weird effect of imbuing additional meanings the original language didn’t intend to contain<sup id="fnref:fn-ted"><a href="#fn:fn-ted" rel="footnote">1</a></sup>. One of the possible origins for the word Typhoon is the Chinese pronunciation of “East Wind”(东风) <sup id="fnref:fn-jstor"><a href="#fn:fn-jstor" rel="footnote">2</a></sup>. Interestingly enough, the word has been imported back to Chinese phonetically as “Typhoon”(台风) with a completely different meaning than the original word east wind.</p>
 
 <p>There’s two translations of the word computers in Chinese: “计算机” and “电脑”. If we go through the typhoon exercise and translate them back to English. The first, “Computing Machine”, is not far off from the original meaning, but the second, “Electronic Brain”, seems far more imaginative; especially compared to what computer systems were able to achieve when these words were first translated.</p>
 
@@ -330,6 +687,9 @@ from /usr/local/bin/brew:17
 
 <div class="footnotes">
   <ol>
+    <li id="fn:fn-ted">
+      <p>Languages definitely <a href="http://www.ted.com/talks/keith_chen_could_your_language_affect_your_ability_to_save_money.html">influences thinking process</a><a href="#fnref:fn-ted" rel="reference">&#8617;</a></p>
+    </li>
     <li id="fn:fn-jstor">
       <p><a href="www.jstor.org/stable/1798728">www.jstor.org/stable/1798728</a><a href="#fnref:fn-jstor" rel="reference">&#8617;</a></p>
     </li>

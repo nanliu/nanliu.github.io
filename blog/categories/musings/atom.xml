@@ -4,7 +4,7 @@
   <title><![CDATA[Category: musings | 电脑]]></title>
   <link href="http://nanliu.github.com/blog/categories/musings/atom.xml" rel="self"/>
   <link href="http://nanliu.github.com/"/>
-  <updated>2013-02-21T21:52:58-08:00</updated>
+  <updated>2013-02-27T13:11:40-08:00</updated>
   <id>http://nanliu.github.com/</id>
   <author>
     <name><![CDATA[Nan Liu]]></name>
@@ -51,7 +51,7 @@
     <link href="http://nanliu.github.com/blog/2013/01/01/from-typhoon-to-computers/"/>
     <updated>2013-01-01T10:21:00-08:00</updated>
     <id>http://nanliu.github.com/blog/2013/01/01/from-typhoon-to-computers</id>
-    <content type="html"><![CDATA[<p>Translations tend to have this weird effect of imbuing additional meanings the original language didn’t intend to contain. One of the possible origins for the word Typhoon is the Chinese pronunciation of “East Wind”(东风) <sup id="fnref:fn-jstor"><a href="#fn:fn-jstor" rel="footnote">1</a></sup>. Interestingly enough, the word has been imported back to Chinese phonetically as “Typhoon”(台风) with a completely different meaning than the original word east wind.</p>
+    <content type="html"><![CDATA[<p>Translations tend to have this weird effect of imbuing additional meanings the original language didn’t intend to contain<sup id="fnref:fn-ted"><a href="#fn:fn-ted" rel="footnote">1</a></sup>. One of the possible origins for the word Typhoon is the Chinese pronunciation of “East Wind”(东风) <sup id="fnref:fn-jstor"><a href="#fn:fn-jstor" rel="footnote">2</a></sup>. Interestingly enough, the word has been imported back to Chinese phonetically as “Typhoon”(台风) with a completely different meaning than the original word east wind.</p>
 
 <p>There’s two translations of the word computers in Chinese: “计算机” and “电脑”. If we go through the typhoon exercise and translate them back to English. The first, “Computing Machine”, is not far off from the original meaning, but the second, “Electronic Brain”, seems far more imaginative; especially compared to what computer systems were able to achieve when these words were first translated.</p>
 
@@ -67,6 +67,9 @@
 
 <div class="footnotes">
   <ol>
+    <li id="fn:fn-ted">
+      <p>Languages definitely <a href="http://www.ted.com/talks/keith_chen_could_your_language_affect_your_ability_to_save_money.html">influences thinking process</a><a href="#fnref:fn-ted" rel="reference">&#8617;</a></p>
+    </li>
     <li id="fn:fn-jstor">
       <p><a href="www.jstor.org/stable/1798728">www.jstor.org/stable/1798728</a><a href="#fnref:fn-jstor" rel="reference">&#8617;</a></p>
     </li>
