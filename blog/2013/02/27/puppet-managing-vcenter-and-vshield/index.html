@@ -59,6 +59,8 @@
     
 		
 		
+		<a class="linkedin" href="http://www.linkedin.com/in/nanliu">LinkedIn</a>
+		
 		
 		
 		
@@ -81,7 +83,16 @@
 
 <p><img src="/images/puppet_device.png" title="'Puppet and vSphere vShield API'" /></p>
 
-<p>The modules can be obtained from github, and installed with the following librarian Puppetfile:</p>
+<p>The modules can be obtained from <a href="http://forge.puppetlabs.com/vmware">forge.puppetlabs.com</a>:</p>
+
+<div class="bogus-wrapper"><notextile><figure class="code"><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
+<span class="line-number">2</span>
+<span class="line-number">3</span>
+</pre></td><td class="code"><pre><code class=""><span class="line">$ puppet module install vmware/vcsa
+</span><span class="line">$ puppet module install vmware/vcenter
+</span><span class="line">$ puppet module install vmware/vshield</span></code></pre></td></tr></table></div></figure></notextile></div>
+
+<p>For development use github repos which can be installed via the following librarian Puppetfile:</p>
 
 <div class="bogus-wrapper"><notextile><figure class="code"> <div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class="line-number">1</span>
 <span class="line-number">2</span>
@@ -391,7 +402,7 @@
 </span><span class="line"><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 
-<p>This should provide general overview for the module capabilities. Additional resources are available beyond what’s covered in this post, however they do not offer comprehensive coverage of the vSphere and vShield API. I hope other users will find this module useful for your environment.</p>
+<p>This should a provide general overview for the module capabilities. Additional resources are available beyond what’s covered in this post, however some of them such as vc_vm are not operational yet, and currently the modules do not offer comprehensive coverage of the vSphere and vShield API. I hope other users will find this module useful for your environment.</p>
 
 <p>Thanks again for the support from R&amp;D team at VMware, and especially Randy Brown and Shawn Holland for contributing the vCenter and vShield module. Also thanks to Rich Lane for releasing RbVmomi, and support from Christian Dickmann for resolving an issue in that library.</p>
 
