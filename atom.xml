@@ -4,7 +4,7 @@
   <title><![CDATA[电脑]]></title>
   <link href="http://nanliu.github.com/atom.xml" rel="self"/>
   <link href="http://nanliu.github.com/"/>
-  <updated>2013-02-27T14:09:15-08:00</updated>
+  <updated>2013-02-28T08:45:02-08:00</updated>
   <id>http://nanliu.github.com/</id>
   <author>
     <name><![CDATA[Nan Liu]]></name>
@@ -212,18 +212,18 @@
 </span><span class="line"><span class="n">anchor</span> <span class="p">{</span> <span class="s1">&#39;/dc1/clu1&#39;</span><span class="p">:</span> <span class="p">}</span>
 </span><span class="line">
 </span><span class="line"><span class="ss">vcenter</span><span class="p">:</span><span class="ss">:host</span> <span class="p">{</span> <span class="s1">&#39;esx1&#39;</span><span class="p">:</span>
-</span><span class="line">  <span class="n">path</span>      <span class="o">=&gt;</span> <span class="s1">&#39;/dc1/clu1&quot;,</span>
-</span><span class="line"><span class="s1">  username  =&gt; &#39;</span><span class="n">root</span><span class="s1">&#39;,</span>
-</span><span class="line"><span class="s1">  password  =&gt; &#39;</span><span class="n">esx_password</span><span class="s1">&#39;,</span>
-</span><span class="line"><span class="s1">  dateTimeConfig =&gt; {</span>
-</span><span class="line"><span class="s1">    &#39;</span><span class="n">ntpConfig</span><span class="s1">&#39; =&gt; {</span>
-</span><span class="line"><span class="s1">      &#39;</span><span class="n">server</span><span class="s1">&#39; =&gt; &#39;</span><span class="n">us</span><span class="o">.</span><span class="n">ntp</span><span class="o">.</span><span class="n">pool</span><span class="o">.</span><span class="n">org</span><span class="s1">&#39;,</span>
-</span><span class="line"><span class="s1">    },</span>
-</span><span class="line"><span class="s1">    &#39;</span><span class="n">timeZone</span><span class="s1">&#39; =&gt; {</span>
-</span><span class="line"><span class="s1">      &#39;</span><span class="n">key</span><span class="s1">&#39; =&gt; &#39;</span><span class="no">UTC</span><span class="s1">&#39;,</span>
-</span><span class="line"><span class="s1">    },</span>
-</span><span class="line"><span class="s1">  },</span>
-</span><span class="line"><span class="s1">  transport =&gt; Transport[&#39;</span><span class="n">vcenter</span><span class="err">&#39;</span><span class="o">]</span><span class="p">,</span>
+</span><span class="line">  <span class="n">path</span>      <span class="o">=&gt;</span> <span class="s1">&#39;/dc1/clu1&#39;</span><span class="p">,</span>
+</span><span class="line">  <span class="n">username</span>  <span class="o">=&gt;</span> <span class="s1">&#39;root&#39;</span><span class="p">,</span>
+</span><span class="line">  <span class="n">password</span>  <span class="o">=&gt;</span> <span class="s1">&#39;esx_password&#39;</span><span class="p">,</span>
+</span><span class="line">  <span class="n">dateTimeConfig</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span><span class="line">    <span class="s1">&#39;ntpConfig&#39;</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span><span class="line">      <span class="s1">&#39;server&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;us.ntp.pool.org&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="p">},</span>
+</span><span class="line">    <span class="s1">&#39;timeZone&#39;</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span><span class="line">      <span class="s1">&#39;key&#39;</span> <span class="o">=&gt;</span> <span class="s1">&#39;UTC&#39;</span><span class="p">,</span>
+</span><span class="line">    <span class="p">},</span>
+</span><span class="line">  <span class="p">},</span>
+</span><span class="line">  <span class="n">transport</span> <span class="o">=&gt;</span> <span class="no">Transport</span><span class="o">[</span><span class="s1">&#39;vcenter&#39;</span><span class="o">]</span><span class="p">,</span>
 </span><span class="line"><span class="p">}</span>
 </span></code></pre></td></tr></table></div></figure></notextile></div>
 

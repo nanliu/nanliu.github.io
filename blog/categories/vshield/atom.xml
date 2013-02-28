@@ -4,7 +4,7 @@
   <title><![CDATA[Category: vshield | 电脑]]></title>
   <link href="http://nanliu.github.com/blog/categories/vshield/atom.xml" rel="self"/>
   <link href="http://nanliu.github.com/"/>
-  <updated>2013-02-27T14:09:15-08:00</updated>
+  <updated>2013-02-28T08:45:02-08:00</updated>
   <id>http://nanliu.github.com/</id>
   <author>
     <name><![CDATA[Nan Liu]]></name>
@@ -211,7 +211,7 @@
 </span><span class='line'><span class="sr">&lt;p&gt;anchor { ‘/</span><span class="n">dc1</span><span class="o">/</span><span class="n">clu1</span><span class="err">’</span><span class="p">:</span> <span class="p">}</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
 </span><span class='line'>
 </span><span class='line'><span class="sr">&lt;p&gt;vcenter::host { ‘esx1’:</span>
-</span><span class='line'><span class="sr">  path      =&amp;gt; ‘/</span><span class="n">dc1</span><span class="o">/</span><span class="n">clu1</span><span class="err">”</span><span class="p">,</span>
+</span><span class='line'><span class="sr">  path      =&amp;gt; ‘/</span><span class="n">dc1</span><span class="o">/</span><span class="n">clu1</span><span class="err">’</span><span class="p">,</span>
 </span><span class='line'>  <span class="n">username</span>  <span class="o">=&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="err">‘</span><span class="n">root</span><span class="err">’</span><span class="p">,</span>
 </span><span class='line'>  <span class="n">password</span>  <span class="o">=&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="err">‘</span><span class="n">esx_password</span><span class="err">’</span><span class="p">,</span>
 </span><span class='line'>  <span class="n">dateTimeConfig</span> <span class="o">=&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="p">{</span>
