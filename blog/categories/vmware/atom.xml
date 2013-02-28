@@ -4,7 +4,7 @@
   <title><![CDATA[Category: vmware | 电脑]]></title>
   <link href="http://nanliu.github.com/blog/categories/vmware/atom.xml" rel="self"/>
   <link href="http://nanliu.github.com/"/>
-  <updated>2013-02-28T09:49:29-08:00</updated>
+  <updated>2013-02-28T10:08:04-08:00</updated>
   <id>http://nanliu.github.com/</id>
   <author>
     <name><![CDATA[Nan Liu]]></name>
@@ -251,7 +251,7 @@
 </span><span class='line'>  <span class="n">server</span>   <span class="o">=&amp;</span><span class="n">gt</span><span class="p">;</span> <span class="err">‘</span><span class="mi">192</span><span class="o">.</span><span class="mi">168</span><span class="o">.</span><span class="mi">1</span><span class="o">.</span><span class="mi">11</span><span class="err">’</span><span class="p">,</span>
 </span><span class='line'><span class="p">}</span><span class="o">&lt;</span><span class="sr">/p&gt;</span>
 </span><span class='line'>
-</span><span class='line'><span class="sr">&lt;p&gt;vshield_global_config { $vshield[‘server’]:</span>
+</span><span class='line'><span class="sr">&lt;p&gt;vshield_global_config { ‘192.168.1.11’:</span>
 </span><span class='line'><span class="sr">  # This is the vcenter connectivity info. See vShield API doc:</span>
 </span><span class='line'><span class="sr">  vc_info   =&amp;gt; {</span>
 </span><span class='line'><span class="sr">    ip_address =&amp;gt; ‘192.168.1.10’,</span>
